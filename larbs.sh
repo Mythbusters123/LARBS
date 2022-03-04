@@ -77,8 +77,14 @@ refreshkeys() { \
 					echo "[$repo]
 Include = /etc/pacman.d/mirrorlist-arch" >> /etc/pacman.conf
 			done
-			pacman -Sy >/dev/null 2>&1
 			pacman-key --populate archlinux
+            # Add ungoogled-chromium OBS
+            curl -s 'https://download.opensuse.org/repositories/home:/ungoogled_chromium/Arch/x86_64/home_ungoogled_chromium_Arch.key' | sudo pacman-key -a -
+            echo '
+            [home_ungoogled_chromium_Arch]
+            SigLevel = Required TrustAll
+            Server = https://download.opensuse.org/repositories/home:/ungoogled_chromium/Arch/$arch ' | sudo tee --append /etc/pacman.conf
+			pacman -Sy >/dev/null 2>&1
 			;;
 	esac ;}
 
@@ -206,16 +212,8 @@ sed -i "s/-j2/-j$(nproc)/;s/^#MAKEFLAGS/MAKEFLAGS/" /etc/makepkg.conf
 
 manualinstall yay-bin || error "Failed to install AUR helper."
 
-# Add ungoogled-chromium OBS
-curl -s 'https://download.opensuse.org/repositories/home:/ungoogled_chromium/Arch/x86_64/home_ungoogled_chromium_Arch.key' | sudo pacman-key -a -
-echo '
-[home_ungoogled_chromium_Arch]
-SigLevel = Required TrustAll
-Server = https://download.opensuse.org/repositories/home:/ungoogled_chromium/Arch/$arch ' | sudo tee --append /etc/pacman.conf
 
 # Final Update of Mirrors
-dialog --title "Larbs Installation" --infobox "Refreshing the mirrors one last time before install to make sure all mirrors are updated" 5 70
-pacman --noconfirm --needed -Syu >/dev/null 2>&1
 # The command that does all the installing. Reads the progs.csv file and
 # installs each needed program the way required. Be sure to run this only after
 # the user has been created and has priviledges to run sudo without a password
