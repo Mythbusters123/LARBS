@@ -215,7 +215,7 @@ Server = https://download.opensuse.org/repositories/home:/ungoogled_chromium/Arc
 
 # Final Update of Mirrors
 dialog --title "Larbs Installation" --infobox "Refreshing the mirrors one last time before install to make sure all mirrors are updated" 5 70
-pacman -Syu
+pacman --noconfirm --needed -Syu >/dev/null 2>&1
 # The command that does all the installing. Reads the progs.csv file and
 # installs each needed program the way required. Be sure to run this only after
 # the user has been created and has priviledges to run sudo without a password
