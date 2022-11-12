@@ -71,6 +71,7 @@ refreshkeys() { \
 			;;
 		*)
 			dialog --infobox "Enabling Arch Repositories..." 4 40
+      pacman-key --init
 			pacman --noconfirm --needed -S artix-keyring artix-archlinux-support >/dev/null 2>&1
 			for repo in extra community; do
 				grep -q "^\[$repo\]" /etc/pacman.conf ||
@@ -78,12 +79,10 @@ refreshkeys() { \
 Include = /etc/pacman.d/mirrorlist-arch" >> /etc/pacman.conf
 			done
 			pacman-key --populate archlinux
-            # Add ungoogled-chromium OBS
-            curl -s 'https://download.opensuse.org/repositories/home:/ungoogled_chromium/Arch/x86_64/home_ungoogled_chromium_Arch.key' | sudo pacman-key -a -
-            echo '
-            [home_ungoogled_chromium_Arch]
-            SigLevel = Required TrustAll
-            Server = https://download.opensuse.org/repositories/home:/ungoogled_chromium/Arch/$arch ' | sudo tee --append /etc/pacman.conf
+      # Enable Universe repo
+      echo '[universe]
+Server = https://universe.artixlinux.org/$arch
+Server = https://mirror1.artixlinux.org/universe/$arch' >> /etc/pacman.conf
 			pacman -Sy >/dev/null 2>&1
 			;;
 	esac ;}
